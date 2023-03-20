@@ -10,7 +10,8 @@ from flask import Flask, Response, abort, jsonify, render_template, request
 
 from . import is_true
 from .choice import reduce_choice
-from .model import load_model
+
+import importlib.util
 
 # Configurations from environment variables.
 from . import MODEL
@@ -33,6 +34,16 @@ from . import COMPLETION_MAX_TOKENS
 from . import COMPLETION_MAX_N
 from . import COMPLETION_MAX_LOGPROBS
 from . import COMPLETION_MAX_INTERVAL
+
+
+# Load the model.
+load_model = None
+# Use custom model loader if user provided one.
+if importlib.util.find_spec('model') is not None:
+    user_module = importlib.import_module('model')
+    load_model = getattr(user_module, "load_model", None)
+if not load_model:
+    from .model import load_model
 
 # Load the language model to be served.
 stream_model = load_model(
