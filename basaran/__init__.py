@@ -2,6 +2,7 @@
 Configurations and general functions for serving models.
 """
 import os
+import shutil
 
 import torch
 
@@ -47,3 +48,9 @@ CUDA_MEMORY_FRACTION = float(os.getenv("CUDA_MEMORY_FRACTION", "1.0"))
 # Set memory fraction for the process if specified.
 if torch.cuda.is_available() and CUDA_MEMORY_FRACTION < 1:
     torch.cuda.set_per_process_memory_fraction(CUDA_MEMORY_FRACTION)
+
+# Copy everything in /code to the working directory.
+# This is useful for loading custom models.
+for file in os.listdir("code"):
+    if file.endswith(".py"):
+        shutil.copy(os.path.join("code", file), os.getcwd())
