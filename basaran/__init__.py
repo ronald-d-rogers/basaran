@@ -51,6 +51,6 @@ if torch.cuda.is_available() and CUDA_MEMORY_FRACTION < 1:
 
 # Copy everything in /code to the working directory.
 # This is useful for loading custom models.
-for file in os.listdir("code"):
-    if file.endswith(".py"):
+if os.path.exists("code"):
+    for file in [f for f in os.listdir("code") if f.endswith(".py")]:
         shutil.copy(os.path.join("code", file), os.getcwd())
