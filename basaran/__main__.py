@@ -7,6 +7,7 @@ import time
 
 import waitress
 from flask import Flask, Response, abort, jsonify, render_template, request
+from flask_cors import CORS
 
 from . import is_true
 from .choice import reduce_choice
@@ -29,6 +30,7 @@ from . import SERVER_CONNECTION_LIMIT
 from . import SERVER_CHANNEL_TIMEOUT
 from . import SERVER_MODEL_NAME
 from . import SERVER_NO_PLAYGROUND
+from . import SERVER_CORS_ENABLED
 from . import COMPLETION_MAX_PROMPT
 from . import COMPLETION_MAX_TOKENS
 from . import COMPLETION_MAX_N
@@ -58,6 +60,10 @@ stream_model = load_model(
 
 # Create and configure application.
 app = Flask(__name__)
+
+if SERVER_CORS_ENABLED:
+    CORS(app)
+
 app.json.ensure_ascii = False
 app.json.sort_keys = False
 app.json.compact = True

@@ -3,6 +3,7 @@ bitsandbytes~=0.37.1
 coverage==6.4.2
 flake8==3.7.9
 flask==2.2.1
+flask-cors==3.0.10
 huggingface-hub~=0.13.3
 pytest==6.2.5
 tenacity~=8.2.2

@@ -23,7 +23,7 @@ MODEL_REVISION = os.getenv("MODEL_REVISION", "")
 MODEL_CACHE_DIR = os.getenv("MODEL_CACHE_DIR", "models")
 MODEL_LOAD_IN_8BIT = is_true(os.getenv("MODEL_LOAD_IN_8BIT", ""))
 MODEL_LOCAL_FILES_ONLY = is_true(os.getenv("MODEL_LOCAL_FILES_ONLY", ""))
-MODEL_TRUST_REMOTE_CODE = is_true(os.getenv("MODEL_TRUST_REMOTE_CODE", ""))
+MODEL_TRUST_REMOTECODE = is_true(os.getenv("MODEL_TRUST_REMOTE_CODE", ""))
 MODEL_HALF_PRECISION = is_true(os.getenv("MODEL_HALF_PRECISION", ""))
 
 # Server-related arguments:
@@ -34,6 +34,7 @@ SERVER_CONNECTION_LIMIT = int(os.getenv("SERVER_CONNECTION_LIMIT", "512"))
 SERVER_CHANNEL_TIMEOUT = int(os.getenv("SERVER_CHANNEL_TIMEOUT", "300"))
 SERVER_MODEL_NAME = os.getenv("SERVER_MODEL_NAME", "") or MODEL
 SERVER_NO_PLAYGROUND = is_true(os.getenv("SERVER_NO_PLAYGROUND", ""))
+SERVER_CORS_ENABLED = os.getenv("SERVER_CORS_ENABLED", "")
 
 # Completion-related arguments:
 COMPLETION_MAX_PROMPT = int(os.getenv("COMPLETION_MAX_PROMPT", "4096"))
