@@ -261,7 +261,7 @@ def main():
         ident=SERVER_IDENTITY,
         connection_limit=SERVER_CONNECTION_LIMIT,
         channel_timeout=SERVER_CHANNEL_TIMEOUT,
-        max_request_header_size=SERVER_MAX_REQUEST_HEADER_SIZE,
+        max_request_header_size=SERVER_MAX_REQUEST_HEADER_SIZE
     )
 
 
