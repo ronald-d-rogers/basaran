@@ -30,6 +30,7 @@ from . import SERVER_CONNECTION_LIMIT
 from . import SERVER_CHANNEL_TIMEOUT
 from . import SERVER_MODEL_NAME
 from . import SERVER_NO_PLAYGROUND
+from . import SERVER_MAX_REQUEST_HEADER_SIZE
 from . import SERVER_CORS_ENABLED
 from . import COMPLETION_MAX_PROMPT
 from . import COMPLETION_MAX_TOKENS
@@ -260,6 +261,7 @@ def main():
         ident=SERVER_IDENTITY,
         connection_limit=SERVER_CONNECTION_LIMIT,
         channel_timeout=SERVER_CHANNEL_TIMEOUT,
+        max_request_header_size=SERVER_MAX_REQUEST_HEADER_SIZE,
     )
 
 
