@@ -45,3 +45,5 @@ ENV CUDA_MEMORY_FRACTION="1.0"
 
 # Specify entrypoint and default parameters
 ENTRYPOINT [ "python", "-m", "basaran" ]
+
+RUN pip install einops==0.6.1
