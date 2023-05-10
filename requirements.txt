@@ -3,6 +3,7 @@ bitsandbytes~=0.38.1
 build>=0.10.0
 coverage>=6.4.2
 einops==0.6.1
+flash-attn==v1.0.3.post0
 flake8>=3.7.9
 flask-cors~=3.0.10
 flask>=2.2.1
@@ -12,4 +13,6 @@ pytest>=6.2.5
 safetensors~=0.3.1
 torch>=1.12.1
 transformers[sentencepiece]~=4.28.1
+triton==2.0.0.dev20221202
 waitress~=2.1.2
+xentropy-cuda-lib@git+https://github.com/HazyResearch/flash-attention.git@v0.2.8#subdirectory=csrc/xentropy

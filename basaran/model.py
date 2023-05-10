@@ -311,12 +311,12 @@ def load_model(
         name_or_path,
         trust_remote_code=True
     )
-    config.attn_config['attn_impl'] = 'flash'
+    config.attn_config['attn_impl'] = 'triton'
 
     model = AutoModelForCausalLM.from_pretrained(
         name_or_path,
         config=config,
-        load_in_8bit=load_in_8bit,
+        torch_dtype=torch.bfloat16,
         trust_remote_code=True
     )
 
