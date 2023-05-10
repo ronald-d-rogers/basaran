@@ -31,7 +31,7 @@ from . import SERVER_CHANNEL_TIMEOUT
 from . import SERVER_MODEL_NAME
 from . import SERVER_NO_PLAYGROUND
 from . import SERVER_MAX_REQUEST_HEADER_SIZE
-from . import SERVER_CORS_ENABLED
+from . import SERVER_CORS_ORIGINS
 from . import COMPLETION_MAX_PROMPT
 from . import COMPLETION_MAX_TOKENS
 from . import COMPLETION_MAX_N
@@ -62,19 +62,19 @@ stream_model = load_model(
 # Create and configure application.
 app = Flask(__name__)
 
-if SERVER_CORS_ENABLED:
-    CORS(app)
-
 app.json.ensure_ascii = False
 app.json.sort_keys = False
 app.json.compact = True
 app.url_map.strict_slashes = False
 
+# Configure cross-origin resource sharing (CORS).
+CORS(app, origins=SERVER_CORS_ORIGINS.split(","))
+
 
 def parse_options(schema):
     """Parse options specified in query parameters and request body."""
     options = {}
-    payload = request.get_json(silent=True)
+    payload = request.get_json(force=True, silent=True)
     for key, dtype in schema.items():
         # Allow casting from int to float.
         if dtype == float:
