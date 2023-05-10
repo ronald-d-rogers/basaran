@@ -230,7 +230,7 @@ class StreamModel:
 
         # Create an attention mask that is just all ones
         attention_mask = input_ids.new_ones(input_ids.shape)
-        kwargs["attention_mask"] = attention_mask
+        kwargs["attention_mask"] = torch.Tensor(attention_mask).to(self.device)
 
         # Start auto-regressive generation.
         while True:
