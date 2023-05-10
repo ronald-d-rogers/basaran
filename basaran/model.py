@@ -6,8 +6,8 @@ import copy
 import torch
 from transformers import (
     AutoModelForCausalLM,
-    AutoModelForSeq2SeqLM,
     AutoTokenizer,
+    AutoConfig,
     LogitsProcessorList,
     MinNewTokensLengthLogitsProcessor,
     TemperatureLogitsWarper,
@@ -307,34 +307,19 @@ def load_model(
     half_precision=False,
 ):
     """Load a text generation model and make it stream-able."""
-    kwargs = {
-        "local_files_only": local_files_only,
-        "trust_remote_code": trust_remote_code,
-    }
-    if revision:
-        kwargs["revision"] = revision
-    if cache_dir:
-        kwargs["cache_dir"] = cache_dir
-    tokenizer = AutoTokenizer.from_pretrained(name_or_path, **kwargs)
+    config = AutoConfig.from_pretrained(
+        name_or_path,
+        trust_remote_code=True
+    )
+    config.attn_config['attn_impl'] = 'triton'
 
-    # Set device mapping and quantization options if CUDA is available.
-    if torch.cuda.is_available():
-        kwargs = kwargs.copy()
-        kwargs["device_map"] = "auto"
-        kwargs["load_in_8bit"] = load_in_8bit
+    model = AutoModelForCausalLM.from_pretrained(
+        name_or_path,
+        config=config,
+        torch_dtype=torch.bfloat16,
+        trust_remote_code=True
+    )
 
-        # Cast all parameters to float16 if quantization is enabled.
-        if half_precision or load_in_8bit:
-            kwargs["torch_dtype"] = torch.float16
-
-    # Support both decoder-only and encoder-decoder models.
-    try:
-        model = AutoModelForCausalLM.from_pretrained(name_or_path, **kwargs)
-    except ValueError:
-        model = AutoModelForSeq2SeqLM.from_pretrained(name_or_path, **kwargs)
-
-    # Check if the model has text generation capabilities.
-    if not model.can_generate():
-        raise TypeError(f"{name_or_path} is not a text generation model")
+    tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neox-20b")
 
     return StreamModel(model, tokenizer)
