@@ -23,9 +23,9 @@ class StreamModel:
 
     def __init__(self, model, tokenizer):
         super().__init__()
-        self.model = model
-        self.tokenizer = tokenizer
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = model.to(self.device)
+        self.tokenizer = tokenizer.to(self.device)
 
     def __call__(
         self,
@@ -230,7 +230,7 @@ class StreamModel:
 
         # Create an attention mask that is just all ones
         attention_mask = input_ids.new_ones(input_ids.shape)
-        kwargs["attention_mask"] = torch.Tensor(attention_mask).to(self.device)
+        kwargs["attention_mask"] = attention_mask
 
         # Start auto-regressive generation.
         while True:
