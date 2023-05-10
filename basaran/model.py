@@ -320,6 +320,6 @@ def load_model(
         trust_remote_code=True
     )
 
-    tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neox-20b")
+    tokenizer = AutoTokenizer.from_pretrained(name_or_path)
 
     return StreamModel(model, tokenizer)
