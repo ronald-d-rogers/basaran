@@ -7,6 +7,7 @@ import time
 
 import waitress
 from flask import Flask, Response, abort, jsonify, render_template, request
+from flask_cors import CORS
 
 from . import is_true
 from .choice import reduce_choice
@@ -29,6 +30,7 @@ from . import SERVER_CONNECTION_LIMIT
 from . import SERVER_CHANNEL_TIMEOUT
 from . import SERVER_MODEL_NAME
 from . import SERVER_NO_PLAYGROUND
+from . import SERVER_CORS_ORIGINS
 from . import COMPLETION_MAX_PROMPT
 from . import COMPLETION_MAX_TOKENS
 from . import COMPLETION_MAX_N
@@ -63,11 +65,14 @@ app.json.sort_keys = False
 app.json.compact = True
 app.url_map.strict_slashes = False
 
+# Configure cross-origin resource sharing (CORS).
+CORS(app, origins=SERVER_CORS_ORIGINS.split(","))
+
 
 def parse_options(schema):
     """Parse options specified in query parameters and request body."""
     options = {}
-    payload = request.get_json(silent=True)
+    payload = request.get_json(force=True, silent=True)
     for key, dtype in schema.items():
         # Allow casting from int to float.
         if dtype == float:

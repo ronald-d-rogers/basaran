@@ -28,16 +28,17 @@ MODEL_HALF_PRECISION = is_true(os.getenv("MODEL_HALF_PRECISION", ""))
 
 # Server-related arguments:
 # https://docs.pylonsproject.org/projects/waitress/en/stable/arguments.html
-SERVER_THREADS = int(os.getenv("SERVER_THREADS", "8"))
+SERVER_THREADS = int(os.getenv("SERVER_THREADS", "32"))
 SERVER_IDENTITY = os.getenv("SERVER_IDENTITY", "basaran")
 SERVER_CONNECTION_LIMIT = int(os.getenv("SERVER_CONNECTION_LIMIT", "512"))
 SERVER_CHANNEL_TIMEOUT = int(os.getenv("SERVER_CHANNEL_TIMEOUT", "300"))
 SERVER_MODEL_NAME = os.getenv("SERVER_MODEL_NAME", "") or MODEL
 SERVER_NO_PLAYGROUND = is_true(os.getenv("SERVER_NO_PLAYGROUND", ""))
+SERVER_CORS_ORIGINS = os.getenv("SERVER_CORS_ORIGINS", "*")
 
 # Completion-related arguments:
-COMPLETION_MAX_PROMPT = int(os.getenv("COMPLETION_MAX_PROMPT", "4096"))
-COMPLETION_MAX_TOKENS = int(os.getenv("COMPLETION_MAX_TOKENS", "4096"))
+COMPLETION_MAX_PROMPT = int(os.getenv("COMPLETION_MAX_PROMPT", "32768"))
+COMPLETION_MAX_TOKENS = int(os.getenv("COMPLETION_MAX_TOKENS", "8192"))
 COMPLETION_MAX_N = int(os.getenv("COMPLETION_MAX_N", "5"))
 COMPLETION_MAX_LOGPROBS = int(os.getenv("COMPLETION_MAX_LOGPROBS", "5"))
 COMPLETION_MAX_INTERVAL = int(os.getenv("COMPLETION_MAX_INTERVAL", "50"))

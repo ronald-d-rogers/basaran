@@ -5,30 +5,46 @@ with large bundled models. See ../deployments/bundle/ for examples.
 """
 import os
 import sys
+import tempfile
 
 import huggingface_hub
 
-if len(sys.argv) <= 1:
-    sys.exit("error: must specify the model to be downloaded")
+if len(sys.argv) < 3:
+    sys.exit("usage: python download.py REPO_ID LOCAL_DIR [REVISION]")
 
-# Get cache directory from arguments or environment variables.
-if len(sys.argv) >= 3:
-    MODEL_CACHE_DIR = sys.argv[2]
-elif "MODEL_CACHE_DIR" in os.environ and os.environ["MODEL_CACHE_DIR"]:
-    MODEL_CACHE_DIR = os.environ["MODEL_CACHE_DIR"]
+if os.getenv("TENSOR_FORMAT") == "safetensors":
+    allow_patterns = ["*.safetensors", "*.safetensors.index.json"]
 else:
-    MODEL_CACHE_DIR = None
+    allow_patterns = ["*.bin", "*.bin.index.json"]
 
-# Get model revision from environment variables.
-if "MODEL_REVISION" in os.environ and os.environ["MODEL_REVISION"]:
-    MODEL_REVISION = os.environ["MODEL_REVISION"]
-else:
-    MODEL_REVISION = None
+ignore_patterns = [
+    ".*",
+    "*.index.json",
+    "*.bin",
+    "*.ckpt",
+    "*.h5",
+    "*.mlmodel",
+    "*.msgpack",
+    "*.onnx",
+    "*.ot",
+    "*.pb",
+    "*.safetensors",
+    "*.tar.gz",
+    "*.tflite",
+]
 
-# Download a snapshot of the specified model from Hugging Face Hub.
-huggingface_hub.snapshot_download(
-    sys.argv[1],
-    cache_dir=MODEL_CACHE_DIR,
-    revision=MODEL_REVISION,
-    resume_download=True,
-)
+kwargs = {
+    "repo_id": sys.argv[1],
+    "local_dir": sys.argv[2],
+    "revision": sys.argv[3] if len(sys.argv) > 3 else None,
+    "local_dir_use_symlinks": False,
+    "resume_download": True,
+}
+
+with tempfile.TemporaryDirectory() as cache_dir:
+    huggingface_hub.snapshot_download(
+        cache_dir=cache_dir, ignore_patterns=ignore_patterns, **kwargs
+    )
+    huggingface_hub.snapshot_download(
+        cache_dir=cache_dir, allow_patterns=allow_patterns, **kwargs
+    )
