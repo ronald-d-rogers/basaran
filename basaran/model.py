@@ -237,6 +237,8 @@ class StreamModel:
             inputs = self.model.prepare_inputs_for_generation(
                 input_ids, **kwargs
             )  # noqa: E501
+            inputs["attention_mask"] = None
+
             with torch.inference_mode():
                 outputs = self.model(
                     **inputs,
