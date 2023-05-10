@@ -228,6 +228,10 @@ class StreamModel:
         # Keep track of which sequences are already finished.
         unfinished = input_ids.new_ones(batch_size)
 
+        # Create an attention mask that is just all ones
+        attention_mask = input_ids.new_ones(input_ids.shape)
+        kwargs["attention_mask"] = attention_mask
+
         # Start auto-regressive generation.
         while True:
             inputs = self.model.prepare_inputs_for_generation(
