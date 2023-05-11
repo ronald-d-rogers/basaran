@@ -29,6 +29,11 @@ class StreamModel:
         self.model.to(device=self.device, dtype=torch.bfloat16)
         self.tokenizer = tokenizer
 
+        self.pad_token_id = self.tokenizer.pad_token_id
+        self.bos_token_id = self.tokenizer.bos_token_id
+        self.eos_token_id = self.tokenizer.eos_token_id
+
+
     def __call__(
         self,
         prompt,
@@ -145,13 +150,13 @@ class StreamModel:
         if (
             config.min_new_tokens is not None
             and config.min_new_tokens > 0
-            and config.eos_token_id is not None
+            and self.eos_token_id is not None
         ):
             processor.append(
                 MinNewTokensLengthLogitsProcessor(
                     prompt_length_to_skip=input_length,
                     min_new_tokens=config.min_new_tokens,
-                    eos_token_id=config.eos_token_id,
+                    eos_token_id=self.eos_token_id,
                 )
             )
 
@@ -188,15 +193,16 @@ class StreamModel:
         kwargs["output_attentions"] = False
         kwargs["output_hidden_states"] = False
         kwargs["use_cache"] = True
-        kwargs["do_sample"] = True
         kwargs["repetition_penalty"] = 1.02
+        kwargs["no_repeat_ngram_size"] = 6
 
         # Collect special token IDs.
-        pad_token_id = self.tokenizer.pad_token_id
-        bos_token_id = self.tokenizer.bos_token_id
-        eos_token_id = self.tokenizer.eos_token_id
-        kwargs["eos_token_id"]: self.tokenizer.eos_token_id
-        kwargs["pad_token_id"]: self.tokenizer.pad_token_id
+        eos_token_id = self.eos_token_id
+        bos_token_id = self.bos_token_id
+        pad_token_id = self.pad_token_id
+        kwargs["eos_token_id"]: self.eos_token_id
+        kwargs["bos_token_id"]: self.bos_token_id
+        kwargs["pad_token_id"]: self.pad_token_id
         if isinstance(eos_token_id, int):
             eos_token_id = [eos_token_id]
         if pad_token_id is None and eos_token_id is not None:
