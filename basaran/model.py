@@ -24,7 +24,9 @@ class StreamModel:
     def __init__(self, model, tokenizer):
         super().__init__()
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = model.to(self.device)
+        self.model = model
+        self.model.eval()
+        self.model.to(device=self.device, dtype=torch.bfloat16)
         self.tokenizer = tokenizer
 
     def __call__(
@@ -185,12 +187,16 @@ class StreamModel:
         kwargs = config.update(**kwargs)
         kwargs["output_attentions"] = False
         kwargs["output_hidden_states"] = False
-        kwargs["use_cache"] = config.use_cache
+        kwargs["use_cache"] = True
+        kwargs["do_sample"] = True
+        kwargs["repetition_penalty"] = 1.02
 
         # Collect special token IDs.
-        pad_token_id = config.pad_token_id
-        bos_token_id = config.bos_token_id
-        eos_token_id = config.eos_token_id
+        pad_token_id = self.tokenizer.pad_token_id
+        bos_token_id = self.tokenizer.bos_token_id
+        eos_token_id = self.tokenizer.eos_token_id
+        kwargs["eos_token_id"]: self.tokenizer.eos_token_id
+        kwargs["pad_token_id"]: self.tokenizer.pad_token_id
         if isinstance(eos_token_id, int):
             eos_token_id = [eos_token_id]
         if pad_token_id is None and eos_token_id is not None:
@@ -317,7 +323,6 @@ def load_model(
         name_or_path,
         trust_remote_code=True
     )
-    config.attn_config['attn_impl'] = 'triton'
 
     model = AutoModelForCausalLM.from_pretrained(
         name_or_path,
