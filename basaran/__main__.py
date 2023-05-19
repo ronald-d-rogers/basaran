@@ -11,8 +11,7 @@ from flask_cors import CORS
 
 from . import is_true
 from .choice import reduce_choice
-
-import importlib.util
+from .model import load_model
 
 # Configurations from environment variables.
 from . import MODEL
@@ -38,16 +37,6 @@ from . import COMPLETION_MAX_N
 from . import COMPLETION_MAX_LOGPROBS
 from . import COMPLETION_MAX_INTERVAL
 
-
-# Load the model.
-load_model = None
-# Use custom model loader if user provided one.
-if importlib.util.find_spec('model') is not None:
-    user_module = importlib.import_module('model')
-    load_model = getattr(user_module, "load_model", None)
-if not load_model:
-    from .model import load_model
-
 # Load the language model to be served.
 stream_model = load_model(
     name_or_path=MODEL,
@@ -61,7 +50,6 @@ stream_model = load_model(
 
 # Create and configure application.
 app = Flask(__name__)
-
 app.json.ensure_ascii = False
 app.json.sort_keys = False
 app.json.compact = True
@@ -261,7 +249,7 @@ def main():
         ident=SERVER_IDENTITY,
         connection_limit=SERVER_CONNECTION_LIMIT,
         channel_timeout=SERVER_CHANNEL_TIMEOUT,
-        max_request_header_size=SERVER_MAX_REQUEST_HEADER_SIZE
+        max_request_header_size=SERVER_MAX_REQUEST_HEADER_SIZE,
     )
 
 
